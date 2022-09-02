@@ -29,4 +29,11 @@ templateRouter.get("/:games/gamelog", (req: Request, res: Response) => {
     ])
 })
 
+//Post particular game
+templateRouter.post("/", (req: Request, res: Response) => {
+    // TODO: Save into storage
+    const game = req.body;
+    res.status(200).json(game)
+})
+
 export default templateRouter
