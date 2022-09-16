@@ -3,13 +3,13 @@ import { string } from "zod";
 
 export interface GamesDocument extends Document {
     name: string,
-    date: Date,
+    date: string,
     result: string
 }
 
 const gamesSchema = new mongoose.Schema({
     name: String,
-    date: Date,
+    date: String,
     result: String
 })
 

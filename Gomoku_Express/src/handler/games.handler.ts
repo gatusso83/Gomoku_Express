@@ -1,37 +1,35 @@
 import express, { Request, Response } from "express"
+import { send } from "process";
 
 import validateSchema from '../middleware/validateSchema'
 
 import { getGameByIdSchema } from "../schema/games.schema";
 
+import { getAllGames, getGameById } from "../service/game.service";
+
 const gamesHandler = express.Router();
 
-const GAMES = [
-    {
-        "gameId": "1",
-        "name": "Game 1",
-        "date": "13/07/2022",
-        "result": "Winner: Black"
-    },
-    {
-        "gameId": "2",
-        "name": "Game 2",
-        "date": "13/07/2022",
-        "result": "Game is a draw"
+//Get all games
+gamesHandler.get("/", async (req: Request, res: Response) => {
+    try {
+        const result = await getAllGames();
+        return res.status(200).send(result.map(m => ({
+            _id: m._id,
+            name: m.name,
+            date: m.date,
+            result: m.result
+        })));
+    } catch (err) {
+        return res.status(500).send(err)
     }
-]
-//Get template
-gamesHandler.get("/", (req: Request, res: Response) => {
-    res.status(200).json(GAMES)
 })
 
-//Get particular game THIS NEEDS CORRECT ROUTE
-gamesHandler.get("/:games/gamelog", (req: Request, res: Response) => {
-    const result = GAMES.findIndex((g) => (g.gameId.toString() === req.params.gameId))
-    if (result) {
-        return res.status(200).json(result)
-    }
-    res.sendStatus(404);
+//Get particular game
+gamesHandler.get("/:gameId", validateSchema(getGameByIdSchema), async (req: Request, res: Response) => {
+    const game = await getGameById(req.params.gameId)
+    console.log(game)
+    if (!game) return res.sendStatus(404)
+    return res.status(200).json({ ...game })
 })
 
 //Post particular game
