@@ -13,4 +13,4 @@ const gamesSchema = new mongoose.Schema({
     result: String
 })
 
-export default mongoose.model<GamesDocument>("Games", gamesSchema)
+export default mongoose.model<GamesDocument>("Gamelogs", gamesSchema)

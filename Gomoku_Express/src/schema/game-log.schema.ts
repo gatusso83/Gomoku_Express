@@ -1,16 +1,26 @@
-import { object, string, number, TypeOf } from "zod"
+import { object, string, number, TypeOf, array } from "zod"
 
 const payload = {
     body: object({
-        gameId: string({
-            required_error: "Game id is required",
-        }),
+        //      gameId: string({
+        //        required_error: "Game id is required",
+        //      }),
         name: string({
             required_error: "Name of game is required",
         }),
         date: string({
             required_error: "Date of game is required",
         }),
+        black: array(
+            number({
+                required_error: "Black moves required"
+            })
+        ),
+        white: array(
+            number({
+                required_error: "White moves required"
+            })
+        ),
         result: string({
             required_error: "Result of game is required",
         }),
@@ -33,19 +43,19 @@ const updateDeleteParams = {
     })
 }
 
-export const createGameSchema = object({
+export const createGameLogSchema = object({
     ...payload
 });
 
-export const getGameSchema = object({
+export const getGameLogSchema = object({
     ...getParams
 })
 
-export const updateGameSchema = object({
+export const updateGameLogSchema = object({
     ...payload,
     ...updateDeleteParams
 })
 
-export type CreateGameSchema = TypeOf<typeof createGameSchema>
-export type ReadGameSchema = TypeOf<typeof getGameSchema>
-export type UpdateGameSchema = TypeOf<typeof updateGameSchema>
+export type CreateGameSchema = TypeOf<typeof createGameLogSchema>
+export type ReadGameSchema = TypeOf<typeof getGameLogSchema>
+export type UpdateGameSchema = TypeOf<typeof updateGameLogSchema>

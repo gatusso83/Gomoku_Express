@@ -1,49 +1,44 @@
 import express, { Request, Response } from "express"
+import { send } from "process";
 
 import validateSchema from '../middleware/validateSchema'
-import { getGameByIdSchema } from "../schema/games.schema";
 
-import { getGameById } from "../service/game.service";
+import { getGameLogSchema, createGameLogSchema } from "../schema/game-log.schema";
+
+import { createGame, getAllGames, getGameLogById } from "../service/game-log.service";
+
 const gameLogHandler = express.Router();
 
-//Get template
-gameLogHandler.get("/", (req: Request, res: Response) => {
-    res.status(200).json([
-        {
-            name: "Game 1",
-            date: "13/07/2022",
-            result: "Winner: Black"
-        },
-        {
-            name: "Game 2",
-            date: "13/07/2022",
-            result: "Game is a draw"
-        }
-    ])
+gameLogHandler.get("/", async (req: Request, res: Response) => {
+    try {
+        const result = await getAllGames();
+        return res.status(200).send(result.map(m => ({
+            _id: m._id,
+            name: m.name,
+            date: m.date,
+            black: m.black,
+            white: m.white,
+            result: m.result
+        })));
+    } catch (err) {
+        return res.status(500).send(err)
+    }
 })
 
-gameLogHandler.get("/:gameId", validateSchema(getGameByIdSchema), async (req: Request, res: Response) => {
-    const game = await getGameById(req.params.gameId)
+//Get game by ID template
+gameLogHandler.get("/:gameId", validateSchema(getGameLogSchema), async (req: Request, res: Response) => {
+    const game = await getGameLogById(req.params.gameId)
     console.log(game)
     if (!game) return res.sendStatus(404)
     return res.status(200).json({ ...game })
 })
 
-//Get particular game
-gameLogHandler.get("/:id", (req: Request, res: Response) => {
-    res.status(200).json([
-        { // this part is wrong it should be prinitng out numbers over the stones. 
-            "_id": 1,
-            "name": "Game 1",
-            "winner": "Player 1"
-        }
-    ])
-})
-
 //Post particular game
-gameLogHandler.post("/", (req: Request, res: Response) => {
+gameLogHandler.post("/", validateSchema(createGameLogSchema), async (req: Request, res: Response) => {
     // TODO: Save into storage
     const game = req.body;
+    const newGame = await createGame({ ...game })
+    //wss.clients.forEach(client)
     res.status(200).json(game)
 })
 

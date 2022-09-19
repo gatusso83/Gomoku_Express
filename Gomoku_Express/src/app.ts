@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 import connectDB from './util/connectDB';
 import gamesHandler from './handler/games.handler';
-import gamelogHandler from './handler/gamelog.handler'
+import gameLogHandler from './handler/gamelog.handler'
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ const port = process.env.PORT;
 app.use(express.json());
 
 app.use('/games', gamesHandler)
-app.use('/game-log/:id', gamelogHandler)
+app.use('/game-log', gameLogHandler)
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World')
