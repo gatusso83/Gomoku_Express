@@ -6,8 +6,10 @@ import validateSchema from '../middleware/validateSchema'
 import { getGameLogSchema, createGameLogSchema } from "../schema/game-log.schema";
 
 import { createGame, getAllGames, getGameLogById } from "../service/game-log.service";
+import { deserializeUser } from "../middleware/deserializeUser";
 
 const gameLogHandler = express.Router();
+gameLogHandler.use(deserializeUser);
 
 gameLogHandler.get("/", async (req: Request, res: Response) => {
     try {
